@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Richest.iml" filepath="$PROJECT_DIR$/Richest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CSCD_prog_assignment_5.iml" filepath="$PROJECT_DIR$/CSCD_prog_assignment_5.iml" />
+      <module fileurl="file://$PROJECT_DIR$/prog5/prog5.iml" filepath="$PROJECT_DIR$/prog5/prog5.iml" />
     </modules>
   </component>
 </project>
