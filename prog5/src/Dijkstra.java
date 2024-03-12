@@ -1,25 +1,15 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.System.exit;
 
 public class Dijkstra {
     public static void main(String[] args) {
 
-        String fileName = "D:\\SCHOOL\\2024\\Winter Quarter\\CSCD 320\\Programming_Assignments\\CSCD_prog_assignment_5\\prog5\\src\\test.txt";
+        String fileName = "C:\\SCHOOL\\Winter 2024\\CSCD 320\\programming_assignment_2\\CSCD320-Prog2\\prog5\\src\\test.txt";
         int src = 0;
 
-
-        ArrayList<Map<Vertex, Vertex>> graph = createGraph(fileName);
-
-        displayGraph(graph);
-
-/*        if (args.length == 2) {
+        /*if (args.length == 2) {
             fileName = args[0];
             src = Integer.parseInt(args[1]);
         } else {
@@ -27,21 +17,38 @@ public class Dijkstra {
             exit(1);
         }*/
 
+        ArrayList<ArrayList<Vertex[]>> graph = createGraph(fileName);
+
+
+        displayGraph(graph);
     }
 
+    public String findShortestPaths(ArrayList<ArrayList<Vertex[]>> graph, int src) {
+        String output = "";
 
-    public static ArrayList<Map<Vertex,Vertex>> createGraph(String fileName) {
+        return output;
+    }
 
-        ArrayList<Map<Vertex,Vertex>> graph = new ArrayList<>();
+    public static ArrayList<ArrayList<Vertex[]>> createGraph(String fileName) {
 
-        int vertices = 0;
+        ArrayList<ArrayList<Vertex[]>> graph = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                ArrayList<Vertex[]> newAdjList = new ArrayList<>();
+                graph.add(newAdjList);
+
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 
             String line;
             while ((line = reader.readLine()) != null) {
-
-                Map<Vertex, Vertex> temp = new HashMap<>();
 
                 String[] parts = line.split(":");
                 if (parts.length == 2) {
@@ -51,14 +58,13 @@ public class Dijkstra {
                         String[] elements = segment.split(",");
                         Vertex hop = new Vertex(Integer.parseInt(elements[0]));
                         Vertex edge = new Vertex(Integer.parseInt(elements[1]));
-                        temp.put(hop,edge);
+                        Vertex[] pair = {hop, edge};
+                        Integer pos = Integer.parseInt(parts[0]);
+                        graph.get(pos).add(pair);
+
                     }
-
-                    graph.add(temp);
                 }
-
             }
-
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -68,14 +74,25 @@ public class Dijkstra {
 
     }
 
-    public static void displayGraph(ArrayList<Map<Vertex,Vertex>> graph) {
+    public static void displayGraph(ArrayList<ArrayList<Vertex[]>> graph) {
         for (int i = 0; i < graph.size(); i++) {
-            System.out.print(i + graph.get(i).toString());
+            System.out.print(i+":");
+            int counter = 0;
+            for (Vertex[] pair : graph.get(i)) {
+                if (counter < graph.get(i).size()-1)
+                    System.out.print(pair[0].id+","+pair[1].id+";");
+                else
+                    System.out.print(pair[0].id+","+pair[1].id);
+                counter++;
+            }
             System.out.println();
+
         }
 
-
     }
+
+
 }
+
 
 

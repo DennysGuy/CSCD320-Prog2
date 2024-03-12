@@ -15,16 +15,13 @@ public class MinHeap {
         int r = 2*index + 2;
         int smallest = index;
 
-
         if (l < heapsize && array[l] < array[index]) {
             smallest = l;
         }
 
-
         if (r < heapsize && array[r] < array[smallest]) {
             smallest = r;
         }
-
 
         if (smallest != index) {
             swap(array, index, smallest);
