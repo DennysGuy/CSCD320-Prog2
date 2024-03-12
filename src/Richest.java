@@ -1,11 +1,10 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 import static java.lang.System.exit;
 
 public class Richest {
+
     public static void main(String[] args) {
         String fileName = "";
         int key = 0;
@@ -15,16 +14,24 @@ public class Richest {
             System.out.println("Please enter a text file and key formatted as: [program filename.txt]");
             exit(1);
         }
-
-
+        int[] heap = new int[10000];
+        int heapSize = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            int[] topTenThousand = new int[10000];
-
             String line;
 
             while ((line = reader.readLine()) != null) {
                 try {
                     int number = Integer.parseInt(line);
+                    if (heapSize < heap.length) {
+                        heap[heapSize] = number;
+                        heapSize++;
+                        if (heapSize == heap.length) {
+                            buildMinHeap(heap,heapSize);
+                        }
+                    } else if (number > heap[0]) {
+                        heap[0] = number;
+                        minHeapify(heap, 0, heapSize);
+                    }
 
                 } catch (NumberFormatException e){
                     System.err.println("Skipping non-integer value: " + line);
@@ -34,101 +41,65 @@ public class Richest {
         } catch (IOException e) {
             System.err.println("Error reading the file: " + e.getMessage());
         }
+
+        heapSort(heap, heapSize);
+        System.out.println(heapSize);
+
+        fileName = "richest-top10k.output";
+        writeToFile(fileName, heap.length, heap);
+        fileName = "richest-top10.output";
+        writeToFile(fileName, 10, heap);
     }
 
-    public static void buildMinHeap(int[] topTenThousand) {
-        /*
-            -- build max heap pseudo code
-            build_max_heap(A) {
-                A.heap_size = A.length //A.length = n
-                for (i = floor(A.length/2); i >= 1; i--)
-                    Max_Heapify(A, i)
+    public static void writeToFile(String fileName, int length, int[] heap) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))){
+            for(int i = 0; i < length; i++) {
+                writer.write(Integer.toString(heap[i]));
+                writer.newLine();
             }
-         */
-
-        int heapSize = topTenThousand.length;
-        for (int i = (int)Math.floor(heapSize/2); i >= 1; i--) {
-            minHeapify(topTenThousand, i);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-
+    }
+    public static void buildMinHeap(int[] array, int heapSize) {
+        for (int i = (int)Math.floor(heapSize/2.0)-1; i >= 0; i--) {
+            minHeapify(array, i, heapSize);
+        }
     }
 
-    public static void minHeapify(int[] topTenThousand, int index) {
-        /*
-            -- max heap properties (change to min
-                - the value of i <= value of parent (for min heap we do value of i >= value of parent)
-                - value of i >= value of children (for min heap value of i <= value of children)
+    public static void minHeapify(int[] array, int index, int heapsize) {
 
-            -- max heapify pseudo code
-            maxHeapify(A, i) {
-                l = left(i) --> 2*i
-                r = right(i)--> 2*i + 1
-                largest = i
-                if l <= A.heap-size and A[l] > A[i]
-                    largest = l
-                else
-                    largest = i
-                if r <= A.heap-size and A[r] > A[largest]
-                    largest = r
-                if largest != i
-                    exchange A[i] with A[largest]
-                    max-heapify(A, largest)
-
-            }
-         */
-
-        int l = 2*index;
-        int r = 2*index + 1;
+        int l = 2*index + 1;
+        int r = 2*index + 2;
         int smallest = index;
 
-        if (l <= topTenThousand.length && topTenThousand[l] < topTenThousand[index]) {
+        if (l < heapsize && array[l] < array[index]) {
             smallest = l;
-        } else {
-            smallest = index;
         }
 
-        if (r <= topTenThousand.length && topTenThousand[r] < topTenThousand[smallest]) {
+        if (r < heapsize && array[r] < array[smallest]) {
             smallest = r;
         }
 
         if (smallest != index) {
-            int temp = topTenThousand[smallest];
-            topTenThousand[smallest] = topTenThousand[index];
-            topTenThousand[index] = temp;
-            minHeapify(topTenThousand,smallest);
+            swap(array, index, smallest);
+            minHeapify(array,smallest, heapsize);
         }
 
     }
 
-    public static void heapsort(int[] topTenThousand) {
-        /*
-            -- originally in ascending order, but we want decending order
-            -- won't have to change anything because min heap will place things in descending order instead of ascending
-            psuedocode for heapsort
+    public static void swap(int[] array, int one, int two) {
+        int temp = array[one];
+        array[one] = array[two];
+        array[two] = temp;
+    }
 
-            Heapsort(A)
-            {
-                Build_min_heap(A)
-                for (i = A.length; i >= 2; i--) {
-                     int temp = A[1];
-                    A[1] = A[i];
-                    A[i] = temp;
-                    A.heap_size--;
-                    min_heapify(A, 1)
+    public static void heapSort(int[] array, int heapSize) {
 
-                }
-
-            }
-
-         */
-        buildMinHeap(topTenThousand);
-        for (int i = topTenThousand.length; i >= 2; i--) {
-            int temp = topTenThousand[1];
-            topTenThousand[1] = topTenThousand[i];
-            topTenThousand[i] = temp;
-
-            minHeapify(topTenThousand, 1);
+        for (int i = array.length - 1; i >= 1; i--) {
+            swap(array, 0, i); // Use 0-based index for swapping
+            heapSize--;
+            minHeapify(array, 0, heapSize); // Use 1-based index for minHeapify
         }
 
 
