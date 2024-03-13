@@ -8,4 +8,9 @@ public class Vertex {
         this.id = id;
     }
 
+    @Override
+    public String toString(){
+        return Integer.toString(this.id);
+    }
+
 }
